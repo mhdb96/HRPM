@@ -1,0 +1,94 @@
+﻿<Window x:Class="KDAnalyzer.Views.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KDAnalyzer.Views"
+        xmlns:converters="clr-namespace:KDAnalyzer.Converters"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:cal="http://www.caliburnproject.org"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:ns="clr-namespace:KDAnalyzer"
+        mc:Ignorable="d" FontSize="14"
+        Closing="Window_Closing"
+        Background="{DynamicResource MaterialDesignPaper}"
+        BorderBrush="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="{StaticResource AllerLt}"
+        Visibility="{Binding WindowVisibility, Mode=TwoWay}"
+        Title="{Binding WindowTitle}" Height="450" Width="300" BorderThickness="0"
+        Style="{StaticResource CustomWindow}"
+        WindowState="{Binding Path=WindowState, Mode=TwoWay}" ResizeMode="NoResize">
+    <Window.Resources>
+        <ResourceDictionary>
+            <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:LoggingStatusToIconConverter x:Key="LoggingStatusToIconConverter"/>
+            <converters:LoggingStatusToColorConverter x:Key="LoggingStatusToColorConverter"/>
+            <converters:LoggingStatusToActionIconConverter x:Key="LoggingStatusToActionIconConverter"/>
+            <converters:LoggingStatusToActionColorConverter x:Key="LoggingStatusToActionColorConverter"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <WindowChrome.WindowChrome>
+        <WindowChrome
+            ResizeBorderThickness="{Binding ResizeBorderThickness}"
+            CaptionHeight="{Binding TitleHeight}"
+            GlassFrameThickness="0"
+            CornerRadius="0"
+            />
+    </WindowChrome.WindowChrome>
+
+    <Grid Grid.Row="1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
+        </Grid.RowDefinitions>
+        <tb:TaskbarIcon
+            x:Name="MyNotifyIcon"
+            MenuActivation="RightClick"
+            TrayMouseDoubleClick="MyNotifyIcon_TrayMouseDoubleClick"
+            IconSource="/Images/Logo/logo.ico">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu FontSize="12" 
+                             Background="{StaticResource MaterialDesignDarkBackground}" 
+                             TextElement.Foreground="{StaticResource  MaterialDesignLightBackground}">
+                    <MenuItem Header="{ns:Loc SystemTrayRestore}" cal:Message.Attach="Restore" Height="22" HorizontalAlignment="Left"/>
+                    <MenuItem Header="{ns:Loc SystemTrayClose}" cal:Message.Attach="Close" Height="22"/>
+                    <Separator Background="{StaticResource MaterialDesignLightSeparatorBackground}"/>
+                    <MenuItem Header="{Binding Version}"  Height="12" IsEnabled="False"/>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+            <tb:TaskbarIcon.TrayToolTip>
+                <Border Background="{StaticResource MaterialDesignDarkBackground}">
+                    <StackPanel Orientation="Horizontal"  Margin="5 5 10 7">
+                        <materialDesign:PackIcon
+                            Kind="{Binding Path=LoggingStatus, Converter={StaticResource LoggingStatusToIconConverter}}" 
+                            Foreground="{Binding Path=LoggingStatus, Converter={StaticResource LoggingStatusToColorConverter}}"
+                            Margin="0 0 5 0"/>
+                        <TextBlock 
+                            Foreground="{StaticResource MaterialDesignLightBackground}" 
+                            VerticalAlignment="Center" 
+                            Text="{Binding LoggingStatusText}"/>
+                    </StackPanel>
+                </Border>
+            </tb:TaskbarIcon.TrayToolTip>
+        </tb:TaskbarIcon>
+        <ContentControl x:Name="ActiveItem" Grid.Row="1" Grid.Column="1">
+            
+        </ContentControl>
+    </Grid>
+</Window>

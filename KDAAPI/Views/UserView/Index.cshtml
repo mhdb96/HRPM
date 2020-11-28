@@ -1,0 +1,8 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>User List</h2>
+
+@Html.AjaxGrid(Url.Action("UserIndexGrid"), new { id = "my-ajax-grid" })

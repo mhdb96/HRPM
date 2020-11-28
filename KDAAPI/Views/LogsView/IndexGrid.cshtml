@@ -1,0 +1,25 @@
+﻿@model IEnumerable<KDABackendLibrary.Models.LogModel>
+
+    @(Html
+    .Grid(Model)
+    .Build(columns =>
+    {
+        columns.Add(model => model.Id).Titled("Log Id");
+        columns.Add(model => model.Text).Titled("Text");
+        columns.Add(model => model.Severity).Titled("Severity");
+
+        columns.Add(model => model.Type).Titled("Type");
+        columns.Add(model => model.User.UserName).Titled("Username");
+        columns.Add(model => model.CreatedAt).Titled("CreatedAt").Formatted("{0:d}");
+        columns.Add(model => model.Date).Titled("Date").Formatted("{0:d}");
+    })
+    .Empty("No data found")
+    .Id("log-grid")
+    .Pageable(pager =>
+    {
+        pager.PagesToDisplay = 10;
+        pager.RowsPerPage = 10;
+    })
+    .Filterable()
+    .Sortable()
+)

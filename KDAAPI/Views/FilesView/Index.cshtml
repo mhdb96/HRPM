@@ -1,0 +1,134 @@
+﻿
+@{
+    ViewBag.Title = "ListFiles";
+}
+
+<h2>ListFiles</h2>
+
+<div class="dateStyle">
+    <select id="categories-select" onchange="OnSelectedCategoryChanged()" class="custom-select">
+        <option value="0">All</option>
+        <option value="1">User</option>
+        <option value="2">Date</option>
+    </select>
+    <select id="users-select" onchange="OnSelectedUserChanged()" hidden class="custom-select">
+        <option value="0" selected>All</option>
+    </select>
+    <input type="date" id="datepicker" name="datepicker" onchange="OnDateSelected()" hidden><br />
+</div>
+
+@*<div id="hamada" class="dateStyle">
+    <a href="/FilesView/DownloadFile/12">download</a>
+</div>*@
+
+@Html.AjaxGrid(Url.Action("FileIndexGrid"), new { id = "file-grid" })
+
+@section scripts{
+<script>
+
+    $(function () {
+        $.extend({
+            GetUsersForSelect: function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/api/users/getusers",
+                    dataType: "json",
+                    success: function (result) {
+                        var options = '';
+                        options += '<option value ="0"></option>';
+                        for (var x = 0; x < result.length; x++) {
+                            options += '<option value="' + result[x][
+                                'Id'] + '">' + result[x]['UserName'] +
+                                '</option>';
+                        }
+                        $('#users-select').html(options);
+                    }
+                });
+            },
+            GetFilesByUserId: function (userId) {
+                $.ajax({
+                    type: "POST",
+                    url: `/api/files/GetUserUploadFiles/${userId}`,
+                    success: function (result) {
+                        FillTableRows(result);
+                    }
+                });
+            },
+            GetFilesByDate: function (selectedDate) {
+                $.ajax({
+                    type: "POST",
+                    url: `/api/getdate/getdates`,
+                    data: { "SelectedDate": selectedDate },
+                    success: function (result) {
+                        FillTableRows(result);
+                    }
+                });
+            },
+            GetAllFiles: function () {
+
+                $.ajax({
+                    type: "POST",
+                    url: `/api/files/GetAllFiles`,
+                    dataType: "json",
+                    success: function (result) {
+                        FillTableRows(result);
+                    }
+                });
+            }
+        });
+
+    });
+
+    function OnSelectedCategoryChanged() {
+        var categoriesSelect = document.getElementById("categories-select");
+        var selectedIndex = categoriesSelect.selectedIndex
+        if (selectedIndex == "0") {
+            ChangeHtmlOnAllSelected()            
+        }
+        else if (selectedIndex == "1") {
+            ChangeHtmlOnUserSelected()
+        }
+        else if (selectedIndex == "2") {
+            ChangeHtmlOnDateSelected()
+        }
+        $.GetAllFiles();
+    }
+    function ChangeHtmlOnAllSelected() {
+        $("#users-select").prop("hidden", true);
+        $("#datepicker").prop("hidden", true);
+    }
+    function ChangeHtmlOnUserSelected() {
+        $("#users-select").prop("hidden", false);
+        $("#datepicker").prop("hidden", true);
+        $.GetUsersForSelect();
+    }
+    function ChangeHtmlOnDateSelected() {
+        $("#users-select").prop("hidden", true);
+        $("#datepicker").prop("hidden", false);
+    }
+    function OnSelectedUserChanged() {
+        var userid = document.getElementById("users-select");
+        var selectedUserId = userid.options[userid.selectedIndex].value;
+        $.GetFilesByUserId(selectedUserId);
+    }
+    function OnDateSelected() {
+        date = document.getElementById("datepicker").value;
+        var selectedDate = date.toString();
+        $.GetFilesByDate(selectedDate);
+    }
+    function FillTableRows(result) {
+        var fileTable = $('#file-grid');
+        fileTable.children()[0].id = "file-table";
+        var tableId = $("#file-table");
+        $("#file-table tr>td").remove();
+        $(result).each(function (index, file) {
+            tableId.append('<tr><td>' + file.Id + '</td><td>'
+                + `<a href="/FilesView/DownloadFile/${file.Id}" style = "color : black;">${file.Path}</a>` + '</td><td>' + file.Date + '</td><td>' + file.CreatedAt
+                + '</td><td>' + file.User.UserName + '</td></tr>');
+        });
+    }
+</script>
+}
+
+
+
