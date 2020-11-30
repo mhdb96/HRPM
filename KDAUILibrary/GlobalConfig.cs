@@ -9,7 +9,7 @@ namespace KDAUILibrary
 {
     public static class GlobalConfig
     {
-        private readonly static string _mainFolderName = "KDA_Files";
+        private readonly static string _mainFolderName = "HRPM_Files";
         private readonly static string _dataFilesFolderName = "Data";
         private readonly static string _logFilesFolderName = "Logs";
         private readonly static string _cacheFilesFolderName = ".cache";

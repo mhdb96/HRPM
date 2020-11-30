@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 
-namespace KDACore.Logic
+namespace KDACore.Helpers
 {
     public static class NativeMethods
     {
@@ -11,10 +11,16 @@ namespace KDACore.Logic
         public static extern IntPtr GetModuleHandle(string lpModuleName);
 
         [DllImport("kernel32.dll")]
-        public static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
+        public static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);        
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr SetWindowsHookEx(HookType hookType, HookProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll")]
+        public static extern int UnhookWinEvent(IntPtr hWinEventHook);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax,IntPtr hmodWinEventProc,WinEventProc pfnWinEventProc,uint idProcess,uint idThread,  uint dwFlags);
 
         [DllImport("user32.dll")]
         public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
@@ -53,5 +59,7 @@ namespace KDACore.Logic
         public static extern IntPtr GetKeyboardLayout(uint thread);
 
         public delegate IntPtr HookProc(int code, IntPtr wParam, IntPtr lParam);
+        public delegate void WinEventProc(IntPtr hWinEventHook,uint evenT,IntPtr hwnd,long idObject,long idChild,uint idEventThread,uint dwmsEventTime);
+
     }
 }

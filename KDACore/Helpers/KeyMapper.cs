@@ -1,7 +1,7 @@
 ﻿using KDASharedLibrary.Enums;
 using System.Windows.Forms;
 
-namespace KDACore.Logic
+namespace KDACore.Helpers
 {
     public class KeyMapper
     {

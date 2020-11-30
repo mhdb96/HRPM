@@ -1,4 +1,4 @@
-﻿namespace KDACore.Logic
+﻿namespace KDACore.Helpers
 {
     public enum HookType : int
     {

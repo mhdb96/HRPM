@@ -41,7 +41,7 @@ namespace KDAnalyzer.ViewModels
         private bool isPaused = false;
         private bool isConnected = false;
         private readonly IEventAggregator _eventAggregator;
-        private StateController controller;
+        private KeystrokeStateController controller;
         private LogsManager logMngr;
         private FilesManager filelMngr;
 
@@ -224,7 +224,7 @@ namespace KDAnalyzer.ViewModels
         /// </summary>
         public MainControlViewModel(IEventAggregator eventAggregator)
         {
-            controller = StateController.GetStateController();
+            controller = KeystrokeStateController.GetStateController();
             logMngr = LogsManager.GetLogsManager();
             filelMngr = FilesManager.GetFilesManager();
             StartTime = startTime.ToString("HH:mm");

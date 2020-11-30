@@ -10,7 +10,7 @@ namespace KDACore.Models
     public class KeystrokeEvent
     {
         public Key Key { get; set; } = new Key();
-        public DateTime EventTime { get; set; }
+        public uint EventTime { get; set; }
         public KeystrokeType Type { get; set; }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace KDACore.Logic
+namespace KDACore.Helpers
 {
 
     [StructLayout(LayoutKind.Sequential)]
-    public class KBDLLHOOKSTRUCT
+    public struct KBDLLHOOKSTRUCT
     {
         public uint vkCode;
         public uint scanCode;

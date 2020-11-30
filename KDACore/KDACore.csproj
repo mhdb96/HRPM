@@ -46,16 +46,24 @@
   <ItemGroup>
     <Compile Include="Enums\KeystrokeType.cs" />
     <Compile Include="Enums\LoggingStatus.cs" />
-    <Compile Include="Logic\HookType.cs" />
-    <Compile Include="Logic\KeyMapper.cs" />
-    <Compile Include="Logic\KeystrokesManager.cs" />
-    <Compile Include="Logic\NativeMethods.cs" />
-    <Compile Include="Logic\Structs.cs" />
-    <Compile Include="Logic\WMEnum.cs" />
+    <Compile Include="Interfaces\IManager.cs" />
+    <Compile Include="Managers\AppManager.cs" />
+    <Compile Include="Managers\MouseManager.cs" />
+    <Compile Include="StateControllers\AppStateController.cs" />
+    <Compile Include="StateControllers\IStateController.cs" />
+    <Compile Include="Helpers\HookType.cs" />
+    <Compile Include="Helpers\KeyMapper.cs" />
+    <Compile Include="Managers\KeystrokesManager.cs" />
+    <Compile Include="Helpers\NativeMethods.cs" />
+    <Compile Include="StateControllersManager.cs" />
+    <Compile Include="Helpers\Structs.cs" />
+    <Compile Include="Helpers\WMEnum.cs" />
     <Compile Include="Models\Keystroke.cs" />
     <Compile Include="Models\KeystrokeEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StateController.cs" />
+    <Compile Include="StateControllers\KeystrokeStateController.cs" />
+    <Compile Include="StateControllers\MouseStateController.cs" />
+    <Compile Include="StateControllers\StateController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -64,6 +72,10 @@
     <ProjectReference Include="..\KDASharedLibrary\KDASharedLibrary.csproj">
       <Project>{dcab7c76-be37-46aa-80f1-6b89d87b97cf}</Project>
       <Name>KDASharedLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KDAUILibrary\KDAUILibrary.csproj">
+      <Project>{C149B5ED-17D8-41E8-8A44-61AD756355B2}</Project>
+      <Name>KDAUILibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

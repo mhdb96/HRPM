@@ -53,6 +53,7 @@
     <Compile Include="Models\BinaryFile.cs" />
     <Compile Include="Models\ErrorLog.cs" />
     <Compile Include="Models\Key.cs" />
+    <Compile Include="Models\KeyboardData.cs" />
     <Compile Include="Models\KeystrokeData.cs" />
     <Compile Include="Models\Log.cs" />
     <Compile Include="Models\SeekTimeData.cs" />

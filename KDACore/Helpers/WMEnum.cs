@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KDACore.Logic
+namespace KDACore.Helpers
 {
     public enum WM : uint
     {

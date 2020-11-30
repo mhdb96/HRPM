@@ -11,12 +11,12 @@ namespace KDACore.Models
     public class Keystroke: ISerializable
     {
         public Key Key { get; set; } = new Key();
-        public DateTime KeyDown { get; set; }
-        public DateTime KeyUp { get; set; }
+        public uint KeyDown { get; set; }
+        public uint KeyUp { get; set; }
         public ushort HoldTime { 
             get 
             {
-                return (ushort)new TimeSpan(KeyUp.Ticks - KeyDown.Ticks).TotalMilliseconds; 
+                return (ushort)(KeyUp - KeyDown); 
             }
         }
         public Keystroke()
@@ -26,14 +26,14 @@ namespace KDACore.Models
         public Keystroke(SerializationInfo info, StreamingContext context)
         {
             Key = (Key)info.GetValue("Key", typeof(Key));
-            KeyDown = (DateTime)info.GetValue("KeyDown", typeof(DateTime));
-            KeyUp = (DateTime)info.GetValue("KeyUp", typeof(DateTime));
+            KeyDown = (uint)info.GetValue("KeyDown", typeof(uint));
+            KeyUp = (uint)info.GetValue("KeyUp", typeof(uint));
         }
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Key", Key, typeof(Key));
-            info.AddValue("KeyDown", KeyDown, typeof(DateTime));
-            info.AddValue("KeyUp", KeyUp, typeof(DateTime));
+            info.AddValue("KeyDown", KeyDown, typeof(uint));
+            info.AddValue("KeyUp", KeyUp, typeof(uint));
         }
     }
 }
