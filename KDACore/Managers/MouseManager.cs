@@ -1,6 +1,7 @@
 ﻿using KDACore.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -25,10 +26,18 @@ namespace KDACore.Managers
         public static IntPtr CallbackFunction(Int32 code, IntPtr wParam, IntPtr lParam)
         {
             WM t = (WM)wParam;
-            if (t == WM.MOUSEWHEEL || t == WM.RBUTTONDOWN || t == WM.RBUTTONUP || t == WM.LBUTTONDOWN || t == WM.LBUTTONUP || t == WM.XBUTTONUP)
+            if (t == WM.MOUSEWHEEL || t == WM.RBUTTONDOWN || t == WM.RBUTTONUP || t == WM.LBUTTONDOWN || t == WM.LBUTTONUP || t == WM.XBUTTONUP || t == WM.MOUSEMOVE)
             {
-                MSLLHOOKSTRUCT ver = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
-                Console.WriteLine(t.ToString() + " " + ver.mouseData + " " + ver.pt.x + " " + ver.pt.y);
+                //Task.Run(async () => { await Task.Run(() => { AppManager.GetAppManager().CheckIfSessionChanged(); }); });
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+                if (AppManager.GetAppManager().CheckIfSessionChanged())
+                {
+                    stopWatch.Stop();
+                    Console.WriteLine(" "+stopWatch.ElapsedMilliseconds);
+                }
+                //MSLLHOOKSTRUCT ver = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+                //Console.WriteLine(t.ToString() + " " + ver.mouseData + " " + ver.pt.x + " " + ver.pt.y);
             }
 
             //Int32 msgType = wParam.ToInt32();

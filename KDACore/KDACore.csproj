@@ -49,6 +49,7 @@
     <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Managers\AppManager.cs" />
     <Compile Include="Managers\MouseManager.cs" />
+    <Compile Include="Models\AppSession.cs" />
     <Compile Include="StateControllers\AppStateController.cs" />
     <Compile Include="StateControllers\IStateController.cs" />
     <Compile Include="Helpers\HookType.cs" />

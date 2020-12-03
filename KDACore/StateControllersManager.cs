@@ -16,8 +16,8 @@ namespace KDACore
         List<IStateController> controllers = new List<IStateController>();
         private StateControllersManager()
         {
-            controllers.Add(AppStateController.GetStateController());
-            //controllers.Add(MouseStateController.GetStateController());
+            controllers.Add(KeystrokeStateController.GetStateController());
+            controllers.Add(MouseStateController.GetStateController());
             //KeystrokeStateController.GetStateController().Initialize(GlobalConfig.LiveDataFilePath);
         }
 

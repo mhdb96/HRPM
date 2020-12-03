@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace KDACore.Managers
@@ -43,43 +44,46 @@ namespace KDACore.Managers
             WM eventType = (WM)wParam;
             if (code >= 0 && (eventType == WM.KEYDOWN || eventType == WM.KEYUP || eventType == WM.SYSKEYDOWN || eventType == WM.SYSKEYUP))
             {
-                var logMngr = GetKeyStrokesManager();
-                IntPtr hWindow = NativeMethods.GetForegroundWindow();
-                StringBuilder title = new StringBuilder(256);
-                NativeMethods.GetWindowText(hWindow, title, title.Capacity);
-                if (title.ToString() != lastTitle)
-                {
-                    lastTitle = title.ToString();
-                    logMngr.WindowChanged();
-                }
-                KBDLLHOOKSTRUCT keyData = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
-                var vKey = Marshal.ReadInt32(lParam);
-                string btnStatus = "";
-                KeystrokeEvent keystrokeEvent = new KeystrokeEvent();
-                keystrokeEvent.EventTime = keyData.time;
-                Keys defaultKeysEnum = (Keys)vKey;
-                var key = KeyMapper.GetKeyEnum(defaultKeysEnum);
-                if (key == KeysList.NoKey)
-                {
-                    return NativeMethods.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
-                }
-                keystrokeEvent.Key.Data = key;                
-                if (eventType == WM.KEYDOWN || eventType == WM.SYSKEYDOWN)
-                {
-                    keystrokeEvent.Type = KeystrokeType.KeyDown;
-                    btnStatus = "Down";
-                }
-                else if (eventType == WM.KEYUP || eventType == WM.SYSKEYUP)
-                {
-                    keystrokeEvent.Type = KeystrokeType.KeyUp;
-                    btnStatus = "Up  ";
-                }
-                logMngr.InsertKeystrokeEvent(keystrokeEvent);
-                if (btnStatus == "Up  " && logMngr.keystrokeEventsBuffer.Count > 30)
-                {
-                    logMngr.KeystrokeMaker();
-                }
-                Console.WriteLine($"{btnStatus},{keyData.time},{defaultKeysEnum.GetDescription()}, {key.GetDescription()}");
+                //Task.Run(async() => { await Task.Run(() => { AppManager.GetAppManager().CheckIfSessionChanged(); }); });
+                AppManager.GetAppManager().CheckIfSessionChanged();
+
+                //var logMngr = GetKeyStrokesManager();
+                //IntPtr hWindow = NativeMethods.GetForegroundWindow();
+                //StringBuilder title = new StringBuilder(256);
+                //NativeMethods.GetWindowText(hWindow, title, title.Capacity);
+                //if (title.ToString() != lastTitle)
+                //{
+                //    lastTitle = title.ToString();
+                //    logMngr.WindowChanged();
+                //}
+                //KBDLLHOOKSTRUCT keyData = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
+                //var vKey = Marshal.ReadInt32(lParam);
+                //string btnStatus = "";
+                //KeystrokeEvent keystrokeEvent = new KeystrokeEvent();
+                //keystrokeEvent.EventTime = keyData.time;
+                //Keys defaultKeysEnum = (Keys)vKey;
+                //var key = KeyMapper.GetKeyEnum(defaultKeysEnum);
+                //if (key == KeysList.NoKey)
+                //{
+                //    return NativeMethods.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+                //}
+                //keystrokeEvent.Key.Data = key;                
+                //if (eventType == WM.KEYDOWN || eventType == WM.SYSKEYDOWN)
+                //{
+                //    keystrokeEvent.Type = KeystrokeType.KeyDown;
+                //    btnStatus = "Down";
+                //}
+                //else if (eventType == WM.KEYUP || eventType == WM.SYSKEYUP)
+                //{
+                //    keystrokeEvent.Type = KeystrokeType.KeyUp;
+                //    btnStatus = "Up  ";
+                //}
+                //logMngr.InsertKeystrokeEvent(keystrokeEvent);
+                //if (btnStatus == "Up  " && logMngr.keystrokeEventsBuffer.Count > 30)
+                //{
+                //    logMngr.KeystrokeMaker();
+                //}
+                //Console.WriteLine($"{btnStatus},{keyData.time},{defaultKeysEnum.GetDescription()}, {key.GetDescription()}");
                 //Trace.WriteLine($"{btnStatus},{DateTime.Now.Ticks},{key.GetDescription()}");
             }
             return NativeMethods.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);

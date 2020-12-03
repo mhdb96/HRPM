@@ -13,7 +13,7 @@ namespace KDACore.StateControllers
     public class AppStateController : StateController
     {
         private static readonly AppStateController _instance = new AppStateController();
-        NativeMethods.WinEventProc callback = AppManager.CallbackFunction;
+        NativeMethods.HookProc callback = AppManager.CallbackFunction;
         private AppStateController()
         {
         }
@@ -31,7 +31,7 @@ namespace KDACore.StateControllers
         {
             var module = Process.GetCurrentProcess().MainModule.ModuleName;
             var moduleHandle = NativeMethods.GetModuleHandle(module);
-            hHook = NativeMethods.SetWinEventHook(0x00000001, 0x7FFFFFFF, IntPtr.Zero, callback, 0, 0, 0 | 2);                        
+            hHook = NativeMethods.SetWindowsHookEx(HookType.WH_CBT,callback,moduleHandle,0);                        
             try
             {
                 isRunning = true;

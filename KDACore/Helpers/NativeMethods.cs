@@ -54,12 +54,38 @@ namespace KDACore.Helpers
         //public static extern IntPtr GetModuleHandle(string moduleName);
 
         [DllImport("user32.dll")]
-        public static extern uint GetWindowThreadProcessId(IntPtr hwnd, IntPtr proccess);
+        public static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint processId);
         [DllImport("user32.dll")] 
         public static extern IntPtr GetKeyboardLayout(uint thread);
+                        
 
         public delegate IntPtr HookProc(int code, IntPtr wParam, IntPtr lParam);
         public delegate void WinEventProc(IntPtr hWinEventHook,uint evenT,IntPtr hwnd,long idObject,long idChild,uint idEventThread,uint dwmsEventTime);
+
+
+
+        
+
+        //Used to get ID of any Window
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
+        public delegate bool WindowEnumProc(IntPtr hwnd, IntPtr lparam);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc callback, IntPtr lParam);
+
+        public static int GetWindowProcessId(IntPtr hwnd)
+        {
+            int pid;
+            GetWindowThreadProcessId(hwnd, out pid);
+            return pid;
+        }
+
+        public static IntPtr GetforegroundWindow()
+        {
+            return GetForegroundWindow();
+        }
 
     }
 }
