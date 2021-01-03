@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="DataAccess\BinaryConnector.cs" />
     <Compile Include="DataAccess\TextConnector.cs" />
+    <Compile Include="Enums\AppType.cs" />
     <Compile Include="Enums\ErrorType.cs" />
     <Compile Include="Enums\KeysList.cs" />
     <Compile Include="Enums\LogSeverity.cs" />

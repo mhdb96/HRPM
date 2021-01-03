@@ -39,7 +39,8 @@ namespace KeyLoggerUI
         NativeMethods.HookProc callback = KeystrokesManager.CallbackFunction;
         StateControllersManager mngr;
         public MainWindow()
-        {
+        {            
+
             InitializeComponent();
             //SetTime();
             //var mngr = KeystrokesManager.GetKeyStrokesManager();
