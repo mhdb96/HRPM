@@ -18,39 +18,8 @@ namespace KDACore.StateControllers
 {    
     public class KeystrokeStateController : StateController
     {        
-        private readonly int _charCount = FileHelper.GetEnumCount<KeysList>();
         private static readonly KeystrokeStateController _instance = new KeystrokeStateController();
         NativeMethods.HookProc callback = KeystrokesManager.CallbackFunction;
-        public KeystrokeData[] KeystrokeData;
-
-        
-        public KeystrokeData[] GetKeyStrokesData()
-        {
-            if (isInitilized)
-            {
-                if (KeystrokeData == null)
-                {
-                    try
-                    {
-                        KeystrokeData = BinaryConnector.StaticLoad<KeystrokeData[]>(filePath);
-                        return KeystrokeData;
-                    }
-                    catch (Exception)
-                    {
-                        KeystrokeData = new KeystrokeData[_charCount];
-                        return KeystrokeData;
-                    }
-                }
-                else
-                {
-                    return KeystrokeData;
-                }
-            }
-            else
-            {
-                throw new Exception("Data cache file path was not provided. Call StateController.Initialize(string path) to pass the path");
-            } 
-        }
 
         private KeystrokeStateController()
         {
@@ -65,12 +34,7 @@ namespace KDACore.StateControllers
         {
             cts.Cancel();
             cts = new CancellationTokenSource();
-            KeystrokesManager.GetKeyStrokesManager().SaveKeystrokeData();
-            KeystrokeData = null;
-        }
-        public void CleanKeystrokeData()
-        {
-            KeystrokeData = null;
+            KeystrokesManager.GetKeyStrokesManager().GetKeyboardData();
         }
         protected override void RunTask(CancellationToken cancellationToken)
         {

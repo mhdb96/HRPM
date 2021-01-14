@@ -22,7 +22,7 @@ namespace KDAnalyzer
         public Bootstrapper()
         {
             CheckForMultipleProgramInstences();
-            KeystrokeStateController.GetStateController().Initialize(GlobalConfig.LiveDataFilePath);
+            StateControllersManager.GetStateController().Initilize(GlobalConfig.LiveDataFilePath);
 
 #if !DEBUG
 InitialSatrt();

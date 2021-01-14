@@ -23,15 +23,17 @@ namespace Tester
 
         static void Main(string[] args)
         {
+            var t = BinaryConnector.StaticLoad<List<AppSession>>(@"C:\Users\mhdb9\Desktop\test.tc");
+            var y = t.GroupBy(a => a.App.ExcutableName);
             //var hash = File.ReadAllText(@"C:\Users\mhdb9\Desktop\hash.txt");
             //byte[] data = System.Text.Encoding.ASCII.GetBytes(Console.ReadLine());
             //data = new System.Security.Cryptography.SHA256Managed().ComputeHash(data);
             //String hash = System.Text.Encoding.ASCII.GetString(data);
             //File.WriteAllText(@"C:\Users\mhdb9\Desktop\hash.txt", hash, Encoding.ASCII);
-            GlobalConfig.InitializeConnections();
+            //GlobalConfig.InitializeConnections();
             //var t = GlobalConfig.Connection.Sessions_GetByUserIdAndDate(12, new DateTime(2020, 9, 1), new DateTime(2020, 10, 1));
             //var t = BinaryConnector.StaticLoad<KeystrokeData[]>(@"C:\Users\mhdb9\Desktop\02-11-2020\data-file_16.kdf");
-            WrongDataFixer.CreateDatabaseRecordsFromCorrectFiles(@"C:\Users\mhdb9\Desktop\nurgul", 17);
+            //WrongDataFixer.CreateDatabaseRecordsFromCorrectFiles(@"C:\Users\mhdb9\Desktop\nurgul", 17);
             //CreateDatabaseRecordsFromFiles();
             //var user = new UserModel {Id = 12 };
             //GlobalConfig.Connection.GetHoldTimesStatistics(user);

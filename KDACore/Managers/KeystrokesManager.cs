@@ -25,9 +25,6 @@ namespace KDACore.Managers
         KeyboardData keyboardData = new KeyboardData();
 
 
-        public static string lastTitle = "";
-
-
         private KeystrokesManager()
         {
             controller = KeystrokeStateController.GetStateController();
@@ -44,47 +41,37 @@ namespace KDACore.Managers
             WM eventType = (WM)wParam;
             if (code >= 0 && (eventType == WM.KEYDOWN || eventType == WM.KEYUP || eventType == WM.SYSKEYDOWN || eventType == WM.SYSKEYUP))
             {
-                //Task.Run(async() => { await Task.Run(() => { AppManager.GetAppManager().CheckIfSessionChanged(); }); });
-                AppManager.GetAppManager().CheckIfSessionChanged();
 
-                //var logMngr = GetKeyStrokesManager();
-                //IntPtr hWindow = NativeMethods.GetForegroundWindow();
-                //StringBuilder title = new StringBuilder(256);
-                //NativeMethods.GetWindowText(hWindow, title, title.Capacity);
-                //if (title.ToString() != lastTitle)
-                //{
-                //    lastTitle = title.ToString();
-                //    logMngr.WindowChanged();
-                //}
-                //KBDLLHOOKSTRUCT keyData = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
-                //var vKey = Marshal.ReadInt32(lParam);
-                //string btnStatus = "";
-                //KeystrokeEvent keystrokeEvent = new KeystrokeEvent();
-                //keystrokeEvent.EventTime = keyData.time;
-                //Keys defaultKeysEnum = (Keys)vKey;
-                //var key = KeyMapper.GetKeyEnum(defaultKeysEnum);
-                //if (key == KeysList.NoKey)
-                //{
-                //    return NativeMethods.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
-                //}
-                //keystrokeEvent.Key.Data = key;                
-                //if (eventType == WM.KEYDOWN || eventType == WM.SYSKEYDOWN)
-                //{
-                //    keystrokeEvent.Type = KeystrokeType.KeyDown;
-                //    btnStatus = "Down";
-                //}
-                //else if (eventType == WM.KEYUP || eventType == WM.SYSKEYUP)
-                //{
-                //    keystrokeEvent.Type = KeystrokeType.KeyUp;
-                //    btnStatus = "Up  ";
-                //}
-                //logMngr.InsertKeystrokeEvent(keystrokeEvent);
-                //if (btnStatus == "Up  " && logMngr.keystrokeEventsBuffer.Count > 30)
-                //{
-                //    logMngr.KeystrokeMaker();
-                //}
+                //Task.Run(async() => { await Task.Run(() => { AppManager.GetAppManager().CheckIfSessionChanged(); }); });                
+                var logMngr = GetKeyStrokesManager();
+                if (AppManager.GetAppManager().IsBusy == true)
+                {                    
+                    return NativeMethods.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+                }
+                AppManager.GetAppManager().CheckIfSessionChanged();                
+                KBDLLHOOKSTRUCT keyData = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
+                var vKey = keyData.vkCode;
+                KeystrokeEvent keystrokeEvent = new KeystrokeEvent();
+                keystrokeEvent.EventTime = keyData.time;
+                Keys defaultKeysEnum = (Keys)vKey;
+                var key = KeyMapper.GetKeyEnum(defaultKeysEnum);
+                if (key == KeysList.NoKey)
+                {
+                    return NativeMethods.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+                }
+                keystrokeEvent.Key.Data = key;
+                if (eventType == WM.KEYDOWN || eventType == WM.SYSKEYDOWN)
+                {
+                    keystrokeEvent.Type = KeystrokeType.KeyDown;
+                    //Console.WriteLine("Down");
+                }
+                else if (eventType == WM.KEYUP || eventType == WM.SYSKEYUP)
+                {
+                    keystrokeEvent.Type = KeystrokeType.KeyUp;
+                    //Console.WriteLine("Up");
+                }
+                logMngr.InsertKeystrokeEvent(keystrokeEvent);
                 //Console.WriteLine($"{btnStatus},{keyData.time},{defaultKeysEnum.GetDescription()}, {key.GetDescription()}");
-                //Trace.WriteLine($"{btnStatus},{DateTime.Now.Ticks},{key.GetDescription()}");
             }
             return NativeMethods.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
@@ -94,19 +81,14 @@ namespace KDACore.Managers
             keystrokeEventsBuffer.Add(key);
         }
 
-        private void WindowChanged()
+        public void SessionChanged()
         {
-            if (keystrokeEventsBuffer.Count == 0)
-            {
-                return;
-            }
-            else
-            {
-                SaveKeystrokeData();
-            }
+            uniqueKeyCount = new short[FileHelper.GetEnumCount<KeysList>()];
+            keystrokes.Clear();
+            keyboardData = new KeyboardData();
         }
 
-        public void SaveKeystrokeData()
+        public KeyboardData GetKeyboardData()
         {
             KeystrokeMaker();
             keyboardData.StrokesCount = keystrokes.Count;
@@ -117,10 +99,8 @@ namespace KDACore.Managers
                 {
                     keyboardData.UniqueKeysCount++;
                 }
-            }
-            BinaryConnector.StaticSave(controller.GetKeyStrokesData(), controller.filePath);
-            uniqueKeyCount = new short[FileHelper.GetEnumCount<KeysList>()];
-            keystrokes.Clear();
+            }     
+            return keyboardData;
         }
 
         private void KeystrokeMaker()
@@ -159,7 +139,7 @@ namespace KDACore.Managers
                 }
             }
             keystrokeEventsBuffer.Clear();
-            Console.WriteLine(keystrokes.Count);
+            //Console.WriteLine(keystrokes.Count);
         }
     }
 }

@@ -14,11 +14,11 @@ namespace KDAUILibrary
         private readonly static string _logFilesFolderName = "Logs";
         private readonly static string _cacheFilesFolderName = ".cache";
 
-        private static string _dataFileName= "data-file_{0}.kdf";
-        private static string _logFileName= "log-file_{0}.klf";
-        private readonly static string _logCacheFileName= "log-cache-file.kcf";
-        private readonly static string _dataCacheFileName = "data-cache-file.kcf";
-        private readonly static string _liveDataFileName = "live-data-file.kcf";
+        private static string _dataFileName= "data-file_{0}.hdf";
+        private static string _logFileName= "log-file_{0}.hlf";
+        private readonly static string _logCacheFileName= "log-cache-file.hcf";
+        private readonly static string _dataCacheFileName = "data-cache-file.hcf";
+        private readonly static string _liveDataFileName = "live-data-file.hcf";
         private readonly static string ProjectRootFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
         public static string CurruntUser

@@ -1,5 +1,7 @@
 ﻿using KDACore.Interfaces;
+using KDACore.Managers;
 using KDACore.StateControllers;
+using KDASharedLibrary.Models;
 using KDAUILibrary;
 using System;
 using System.Collections.Generic;
@@ -13,12 +15,12 @@ namespace KDACore
     public class StateControllersManager
     {
         private static readonly StateControllersManager _instance = new StateControllersManager();
+        private AppManager mngr = AppManager.GetAppManager();
         List<IStateController> controllers = new List<IStateController>();
         private StateControllersManager()
         {
             controllers.Add(KeystrokeStateController.GetStateController());
-            controllers.Add(MouseStateController.GetStateController());
-            //KeystrokeStateController.GetStateController().Initialize(GlobalConfig.LiveDataFilePath);
+            controllers.Add(MouseStateController.GetStateController());            
         }
 
         public static StateControllersManager GetStateController()
@@ -38,6 +40,25 @@ namespace KDACore
             {
                 controller.Stop();
             }
+            mngr.SaveSessionData(mngr.GetLastSession());
         }
+
+        public List<AppSession> GetSessions()
+        {            
+            mngr.SaveSessionData(mngr.GetLastSession());
+            return mngr.GetAllSessions();
+        }
+
+        public void Initilize(string path)
+        {
+            mngr.Initialize(path);
+        }
+
+        public void ClearData()
+        {
+            mngr.ClearSessions();
+        }
+
+
     }
 }

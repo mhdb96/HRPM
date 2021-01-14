@@ -26,7 +26,7 @@ namespace KDACore.StateControllers
         {
             cts.Cancel();
             cts = new CancellationTokenSource();
-            KeystrokesManager.GetKeyStrokesManager().SaveKeystrokeData();
+            KeystrokesManager.GetKeyStrokesManager().GetKeyboardData();
         }
         protected override void RunTask(CancellationToken cancellationToken)
         {

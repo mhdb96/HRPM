@@ -13,18 +13,12 @@ namespace KDACore.StateControllers
         public string filePath;
         protected CancellationTokenSource cts = new CancellationTokenSource();
         protected Task loggerTask;
-        protected bool isInitilized = false;
         protected bool isRunning = false;
         protected IntPtr hHook;
 
         protected StateController()
         {
 
-        }
-        public void Initialize(string path)
-        {
-            isInitilized = true;
-            filePath = path;
         }
 
         public bool IsRunning()

@@ -13,7 +13,14 @@ namespace KDASharedLibrary.Models
         public int StrokeHoldTimesAvg { 
             get 
             {
-                return StrokeHoldTimes / StrokesCount;
+                if (StrokesCount > 0)
+                {
+                    return StrokeHoldTimes / StrokesCount;
+                }
+                else
+                {
+                    return 0;
+                }
             } 
         }
 

@@ -41,7 +41,7 @@ namespace KDAnalyzer.ViewModels
         private bool isPaused = false;
         private bool isConnected = false;
         private readonly IEventAggregator _eventAggregator;
-        private KeystrokeStateController controller;
+        private StateControllersManager stateMngr;
         private LogsManager logMngr;
         private FilesManager filelMngr;
 
@@ -224,7 +224,7 @@ namespace KDAnalyzer.ViewModels
         /// </summary>
         public MainControlViewModel(IEventAggregator eventAggregator)
         {
-            controller = KeystrokeStateController.GetStateController();
+            stateMngr = StateControllersManager.GetStateController();
             logMngr = LogsManager.GetLogsManager();
             filelMngr = FilesManager.GetFilesManager();
             StartTime = startTime.ToString("HH:mm");
@@ -292,8 +292,8 @@ namespace KDAnalyzer.ViewModels
                     {
                         _shouldSkip = true;
 
-                        filelMngr.CreateLocalFile(controller.GetKeyStrokesData());
-                        controller.CleanKeystrokeData();
+                        filelMngr.CreateLocalFile(stateMngr.GetSessions());
+                        stateMngr.ClearData();
                         filelMngr.DeleteLiveDataFile();                        
                         if (filelMngr.IsSync == false)
                         {
@@ -350,7 +350,7 @@ namespace KDAnalyzer.ViewModels
                 (nowtime > endTime.TimeOfDay || nowtime < startTime.TimeOfDay))
             {
                 LoggingStatus = LoggingStatus.Stopped;
-                filelMngr.CreateLocalFile(controller.GetKeyStrokesData());
+                filelMngr.CreateLocalFile(stateMngr.GetSessions());
                 filelMngr.DeleteLiveDataFile();
                 isConnected = false;
                 IsControlable = false;
@@ -390,11 +390,11 @@ namespace KDAnalyzer.ViewModels
         {
             if(LoggingStatus == LoggingStatus.Running)
             {
-                controller.Run(LoggingStatus);
+                stateMngr.Run();
             } 
             else
             {
-                controller.Stop(LoggingStatus);
+                stateMngr.Stop();
             }
         }
         private void PublishStatusCahngedEvent()

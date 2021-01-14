@@ -96,7 +96,7 @@ namespace KDAUILibrary.Logic.Files
             }
         }
 
-        public void CreateLocalFile(KeystrokeData[] data)
+        public void CreateLocalFile(List<AppSession> data)
         {
             BinaryConnector.StaticSave(data, GlobalConfig.DataFilePath);
             BinaryFile file =  EncodeIntoBinaryFile(GlobalConfig.DataFilePath);

@@ -35,5 +35,5 @@ namespace KDACore.Models
             info.AddValue("KeyDown", KeyDown, typeof(uint));
             info.AddValue("KeyUp", KeyUp, typeof(uint));
         }
-    }
+    } 
 }

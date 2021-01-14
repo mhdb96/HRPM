@@ -1,6 +1,8 @@
 ﻿using KDACore.Helpers;
 using KDACore.Models;
+using KDASharedLibrary.DataAccess;
 using KDASharedLibrary.Enums;
+using KDASharedLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,11 +18,56 @@ namespace KDACore.Managers
     public class AppManager
     {
         private static readonly AppManager _instance = new AppManager();
+        private bool isInitilized = false;
+        public string filePath;
         private List<AppSession> sessions { get; set; } = new List<AppSession>();
+        private bool isBusy = false;
+        public bool IsBusy { 
+            get 
+            {
+                return isBusy; 
+            } 
+        }
 
-        private AppManager()
+        public List<AppSession> GetAllSessions()
         {
-            //keystrokeEventsBuffer = new List<KeystrokeEvent>();
+            if (isInitilized)
+            {
+                if (sessions == null)
+                {
+                    try
+                    {
+                        sessions = BinaryConnector.StaticLoad<List<AppSession>>(filePath);
+                        return sessions;
+                    }
+                    catch (Exception)
+                    {
+                        sessions = new List<AppSession>();
+                        return sessions;
+                    }
+                }
+                else
+                {
+                    return sessions;
+                }
+            }
+            else
+            {
+                throw new Exception("Data cache file path was not provided. Call AppManager.Initialize(string path) to pass the path");
+            }
+        }
+
+        public void ClearSessions()
+        {
+            sessions = new List<AppSession>();
+        }
+        public void Initialize(string path)
+        {
+            isInitilized = true;
+            filePath = path;
+        }
+        private AppManager()
+        {            
         }
 
         public static AppManager GetAppManager()
@@ -40,19 +87,17 @@ namespace KDACore.Managers
             }
             
         }
-        public void AddSession(AppSession session)
-        {
-            sessions.Add(session);
-        }
 
         private void CreateSession(AppSession session)
         {
-            if(session.HeaderText != "")
-            {                                
-                AddSession(session);
-                //Console.Write($"{session.ProcessName} is displaying {session.HeaderText} at {session.ExcutableName}");
-            }
-            
+            sessions.Add(session);
+            BinaryConnector.StaticSave(sessions, filePath);
+            //if(session.HeaderText != "")
+            //{                                
+            //    AddSession(session);
+            //    //Console.Write($"{session.ProcessName} is displaying {session.HeaderText} at {session.ExcutableName}");
+            //}
+
         }
         private WindowInfo GetWindowInfo()
         {
@@ -63,28 +108,40 @@ namespace KDACore.Managers
             win.Title = title.ToString();
             return win;
         }
-        public /*async Task<bool>*/ bool CheckIfSessionChanged()
+        public async Task<bool> /*bool*/ CheckIfSessionChanged()
         {
-            WindowInfo winInfo = GetWindowInfo();
-            //uint t;            
-            //NativeMethods.GetWindowThreadProcessId(hWindow, out t);         
-            AppSession lastSession = GetLastSession();            
-            if (lastSession != null)
+            isBusy = true;        
+            bool isChanged;
+            WindowInfo winInfo = GetWindowInfo();            
+            if (sessions.Count > 0)
             {
-                if (winInfo.Title == GetLastSession().HeaderText || winInfo.Title == "")
+                AppSession lastSession = GetLastSession();
+                if (winInfo.Title == lastSession.App.HeaderText || winInfo.Title == "")
                 {
-                    return false;
+                    isChanged = false;
                 }
                 else
                 {
-                    lastSession.EndTime = DateTime.Now;
-                    AppSession newSession = GetNewSessionInfo(winInfo);
+                    AppSession newSession = /*await Task.Run(() => */GetNewSessionInfo(winInfo)/*)*/;
                     if (newSession == null)
                     {
-                        return false;
+                        isChanged = false;
                     }
-                    CreateSession(newSession);
-                    return true;
+                    else
+                    {
+                        lastSession.EndTime = DateTime.Now;
+                        SaveSessionData(lastSession);
+                        if (lastSession.KeyboardData == null || lastSession.MouseData == null)
+                        {
+                            isChanged = false;
+                        }
+                        else
+                        {
+                            Console.WriteLine(newSession.App.ProcessName);
+                            CreateSession(newSession);
+                            isChanged = true;
+                        }                        
+                    }                    
                 }
             }
             else
@@ -92,10 +149,26 @@ namespace KDACore.Managers
                 AppSession newSession = GetNewSessionInfo(winInfo);
                 if (newSession == null)
                 {
-                    return false;
+                    isChanged = false;
                 }
-                CreateSession(newSession);
-                return false;
+                else
+                {
+                    sessions.Add(newSession);
+                    isChanged = false;
+                }                
+            }             
+            isBusy = false;
+            return isChanged;            
+        }
+
+        public void SaveSessionData(AppSession session)
+        {
+            if (session.KeyboardData == null && session.MouseData == null)
+            {
+                session.KeyboardData = KeystrokesManager.GetKeyStrokesManager().GetKeyboardData();
+                session.MouseData = MouseManager.GetMouseManager().GetMouseData();
+                KeystrokesManager.GetKeyStrokesManager().SessionChanged();
+                MouseManager.GetMouseManager().SessionChanged();
             }
         }
 
@@ -103,7 +176,7 @@ namespace KDACore.Managers
         {
             AppSession newSession = new AppSession();
             newSession.StartTime = DateTime.Now;
-            newSession.HeaderText = winInfo.Title;
+            newSession.App.HeaderText = winInfo.Title;
             Process foregroundProcess = Process.GetProcessById(NativeMethods.GetWindowProcessId(winInfo.WindowHandler));
             if (foregroundProcess.ProcessName == "ApplicationFrameHost")
             {
@@ -114,7 +187,7 @@ namespace KDACore.Managers
                         return null;
                     }
                     foregroundProcess = GetRealProcess(foregroundProcess);
-                    newSession.ProcessName = foregroundProcess.ProcessName;
+                    newSession.App.ProcessName = foregroundProcess.ProcessName;
                 }
                 catch (Exception)
                 {
@@ -123,21 +196,21 @@ namespace KDACore.Managers
             }
             else
             {
-                newSession.ProcessName = foregroundProcess.ProcessName;
+                newSession.App.ProcessName = foregroundProcess.ProcessName;
                 if (foregroundProcess.ProcessName == "chrome")
                 {
-                    newSession.Content =  GetUrl(winInfo.WindowHandler);
-                    newSession.AppType = AppType.Browser;
+                    newSession.App.Content =  GetUrl(winInfo.WindowHandler);
+                    newSession.App.Type = AppType.Browser;
                 }
                     
             }
             try
             {
-                newSession.ExcutableName = foregroundProcess.MainModule.FileName.ToString();
+                newSession.App.ExcutableName = foregroundProcess.MainModule.FileName.ToString();
             }
             catch (Exception)
             {
-                newSession.ExcutableName = "Access Denied";
+                newSession.App.ExcutableName = "Access Denied";
             }
             return newSession;
         }
@@ -147,8 +220,9 @@ namespace KDACore.Managers
             AutomationElement elm = AutomationElement.FromHandle(hWindow);            
             AutomationElement elmUrlBar;
             try
-            {                                      
-                var pane1 = elm.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Google Chrome"));            
+            {
+                //var t = elm.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Pane));
+                var pane1 = elm.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Pane))[1];
                 var pane2 = pane1.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Pane))[1];
                 var pane3 = pane2.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Pane));
                 var pane4 = pane3.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Pane));
@@ -178,7 +252,7 @@ namespace KDACore.Managers
                 try
                 {
                     ret = ((ValuePattern)elmUrlBar.GetCurrentPattern(patterns[0])).Current.Value;
-                    //Console.WriteLine("Open Chrome URL found: '" + ret + "'");
+                    var uri = new Uri(ret);                                        
                     return ret;
                 }
                 catch { }

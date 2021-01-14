@@ -1,4 +1,9 @@
-﻿using KDACore.Helpers;
+﻿using KDACore.Enums;
+using KDACore.Helpers;
+using KDACore.Models;
+using KDACore.StateControllers;
+using KDASharedLibrary.Enums;
+using KDASharedLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,10 +17,15 @@ namespace KDACore.Managers
     public class MouseManager
     {
         private static readonly MouseManager _instance = new MouseManager();
+        private List<MouseClick> mouseClicks = new List<MouseClick>();
+        private List<MouseClickEvent> mouseClickEventsBuffer;
+        private MouseStateController controller;
+        MouseData mouseData = new MouseData();
 
         private MouseManager()
         {
-            //keystrokeEventsBuffer = new List<KeystrokeEvent>();
+            controller = MouseStateController.GetStateController();
+            mouseClickEventsBuffer = new List<MouseClickEvent>();
         }
 
         public static MouseManager GetMouseManager()
@@ -26,179 +36,110 @@ namespace KDACore.Managers
         public static IntPtr CallbackFunction(Int32 code, IntPtr wParam, IntPtr lParam)
         {
             WM t = (WM)wParam;
-            if (t == WM.MOUSEWHEEL || t == WM.RBUTTONDOWN || t == WM.RBUTTONUP || t == WM.LBUTTONDOWN || t == WM.LBUTTONUP || t == WM.XBUTTONUP || t == WM.MOUSEMOVE)
+            if (t == WM.MOUSEWHEEL || t == WM.RBUTTONDOWN || t == WM.RBUTTONUP || t == WM.LBUTTONDOWN || t == WM.LBUTTONUP || t == WM.XBUTTONUP || t == WM.XBUTTONDOWN || t == WM.MOUSEMOVE)
             {
                 //Task.Run(async () => { await Task.Run(() => { AppManager.GetAppManager().CheckIfSessionChanged(); }); });
-                Stopwatch stopWatch = new Stopwatch();
-                stopWatch.Start();
-                if (AppManager.GetAppManager().CheckIfSessionChanged())
-                {
-                    stopWatch.Stop();
-                    Console.WriteLine(" "+stopWatch.ElapsedMilliseconds);
+                var mngr = GetMouseManager();
+                if (AppManager.GetAppManager().IsBusy == true)
+                {                    
+                    return NativeMethods.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
                 }
-                //MSLLHOOKSTRUCT ver = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
-                //Console.WriteLine(t.ToString() + " " + ver.mouseData + " " + ver.pt.x + " " + ver.pt.y);
-            }
+                AppManager.GetAppManager().CheckIfSessionChanged();
+                MSLLHOOKSTRUCT butonData = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+                MouseClickEvent mouseClickEvent = new MouseClickEvent();
+                mouseClickEvent.EventTime = butonData.time;
+                if(t == WM.RBUTTONDOWN || t == WM.RBUTTONUP)
+                {
+                    mouseClickEvent.MouseButton.Data = MouseButtonList.RightButton;
+                    if(t == WM.RBUTTONDOWN)
+                    {
+                        mouseClickEvent.Type = KeystrokeType.KeyDown;
+                        //Console.WriteLine("Down");
 
-            //Int32 msgType = wParam.ToInt32();
-            //if (code >= 0 && (msgType == 0x100 || msgType == 0x104 || msgType == 0x101))
-            //{
-            //    var logMngr = GetKeyStrokesManager();
-            //    //var t = logMngr.GetCurrentKeyboardLayout().Name;
-            //    IntPtr hWindow = NativeMethods.GetForegroundWindow();
-            //    StringBuilder title = new StringBuilder(256);
-            //    NativeMethods.GetWindowText(hWindow, title, title.Capacity);
-            //    if (title.ToString() != lastTitle)
-            //    {
-            //        lastTitle = title.ToString();
-            //        logMngr.WindowChanged();
-            //    }
-            //    var vKey = Marshal.ReadInt32(lParam);
-            //    string btnStatus = "";
-            //    KeystrokeEvent keystrokeEvent = new KeystrokeEvent();
-            //    keystrokeEvent.EventTime = DateTime.Now;
-            //    Keys defaultKeysEnum = (Keys)vKey;
-            //    var key = KeyMapper.GetKeyEnum(defaultKeysEnum);
-            //    if (key == KeysList.NoKey)
-            //    {
-            //        return NativeMethods.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
-            //    }
-            //    keystrokeEvent.Key.Data = key;
-            //    if (wParam.ToInt32() == 256)
-            //    {
-            //        keystrokeEvent.Type = KeystrokeType.KeyDown;
-            //        btnStatus = "Down";
-            //    }
-            //    else if (wParam.ToInt32() == 257)
-            //    {
-            //        keystrokeEvent.Type = KeystrokeType.KeyUp;
-            //        btnStatus = "Up  ";
-            //    }
-            //    logMngr.InsertKeystrokeEvent(keystrokeEvent);
-            //    Console.WriteLine($"{btnStatus},{DateTime.Now.Ticks},{defaultKeysEnum.GetDescription()}, {key.GetDescription()}");
-            //    //Trace.WriteLine($"{btnStatus},{DateTime.Now.Ticks},{key.GetDescription()}");
-            //}
+                    }
+                    else
+                    {
+                        mouseClickEvent.Type = KeystrokeType.KeyUp;
+                        //Console.WriteLine("Up");
+                    }
+                }
+                else if (t == WM.LBUTTONDOWN || t == WM.LBUTTONUP) 
+                {
+                    mouseClickEvent.MouseButton.Data = MouseButtonList.LeftButton;
+                    if (t == WM.LBUTTONDOWN)
+                    {
+                        mouseClickEvent.Type = KeystrokeType.KeyDown;
+                        //Console.WriteLine("Down");
+                    }
+                    else
+                    {
+                        mouseClickEvent.Type = KeystrokeType.KeyUp;
+                        //Console.WriteLine("Up");
+                    }
+                }
+                else
+                {
+                    return NativeMethods.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+                }
+
+                mngr.InsertMouseClickEvent(mouseClickEvent);             
+            }
             return NativeMethods.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
 
-        //private void InsertKeystrokeEvent(KeystrokeEvent key)
-        //{
-        //    keystrokeEventsBuffer.Add(key);
-        //}
+        private void InsertMouseClickEvent(MouseClickEvent mouseClickEvent)
+        {
+            mouseClickEventsBuffer.Add(mouseClickEvent);
+        }
 
-        //private void WindowChanged()
-        //{
-        //    if (keystrokeEventsBuffer.Count == 0)
-        //    {
-        //        return;
-        //    }
-        //    else
-        //    {
-        //        SaveKeystrokeData();
-        //    }
-        //}
+        public void SessionChanged()
+        {            
+            mouseClicks.Clear();
+            mouseData = new MouseData();
+        }
 
-        //public void SaveKeystrokeData()
-        //{
-        //    KeystrokeMaker();
-        //    GetSeekTime();
-        //    BinaryConnector.StaticSave(controller.GetKeyStrokesData(), controller.filePath);
-        //    keystrokes.Clear();
-        //}
+        public MouseData GetMouseData()
+        {
+            MouseClickMaker();
+            mouseData.MouseClickCount = (uint)mouseClicks.Count;                        
+            return mouseData;
+        }
 
-        //private void KeystrokeMaker()
-        //{
-        //    for (int i = 0; i < keystrokeEventsBuffer.Count; i++)
-        //    {
-        //        if (keystrokeEventsBuffer[i] != null)
-        //        {
-        //            if (keystrokeEventsBuffer[i].Type == KeystrokeType.KeyDown)
-        //            {
-        //                Keystroke keystroke = new Keystroke();
-        //                keystroke.Key = keystrokeEventsBuffer[i].Key;
-        //                keystroke.KeyDown = keystrokeEventsBuffer[i].EventTime;
-        //                for (int j = i + 1; j < keystrokeEventsBuffer.Count; j++)
-        //                {
-        //                    if (keystrokeEventsBuffer[j] != null)
-        //                    {
-        //                        if (keystrokeEventsBuffer[j].Key.KeyIndex == keystroke.Key.KeyIndex)
-        //                        {
-        //                            if (keystrokeEventsBuffer[j].Type == KeystrokeType.KeyUp)
-        //                            {
-        //                                keystroke.KeyUp = keystrokeEventsBuffer[j].EventTime;
-        //                                break;
-        //                            }
-        //                            else
-        //                            {
-        //                                keystrokeEventsBuffer[j] = null;
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //                keystrokes.Add(keystroke);
-        //            }
-        //        }
-        //    }
-        //    keystrokeEventsBuffer.Clear();
-        //}
-
-        //private void GetSeekTime()
-        //{
-        //    var KeystrokesData = controller.GetKeyStrokesData();
-        //    for (int i = 0; i < keystrokes.Count; i++)
-        //    {
-        //        // the pressed key 
-        //        int to = keystrokes[i].Key.KeyIndex;
-
-        //        if (KeystrokesData[to] == null)
-        //        {
-        //            KeystrokesData[to] = new KeystrokeData();
-        //            KeystrokesData[to].Key = keystrokes[i].Key;
-        //        }
-        //        KeystrokesData[to].HoldTimes.Add(keystrokes[i].HoldTime);
-
-        //        //skip first element for seektime
-        //        if (i == 0)
-        //        {
-        //            continue;
-        //        }
-        //        else
-        //        {
-        //            // the key pressed before
-        //            int from = keystrokes[i - 1].Key.KeyIndex;
-
-        //            // -1 NoKey key index
-        //            if (to == -1 || from == -1)
-        //            {
-        //                continue;
-        //            }
-        //            if (KeystrokesData[to].SeekTimes[from] == null)
-        //            {
-        //                KeystrokesData[to].SeekTimes[from] = new List<ushort>();
-        //            }
-        //            ushort seekTime = (ushort)new TimeSpan(keystrokes[i].KeyDown.Ticks - keystrokes[i - 1].KeyDown.Ticks).TotalMilliseconds;
-        //            if (seekTime > 5000)
-        //            {
-        //                seekTime = 0;
-        //            }
-        //            KeystrokesData[to].SeekTimes[from].Add(seekTime);
-        //        }
-        //    }
-        //    controller.KeystrokeData = KeystrokesData;
-        //}
-        //private CultureInfo GetCurrentKeyboardLayout()
-        //{
-        //    try
-        //    {
-        //        IntPtr foregroundWindow = NativeMethods.GetForegroundWindow();
-        //        uint foregroundProcess = NativeMethods.GetWindowThreadProcessId(foregroundWindow, IntPtr.Zero);
-        //        int keyboardLayout = NativeMethods.GetKeyboardLayout(foregroundProcess).ToInt32() & 0xFFFF;
-        //        return new CultureInfo(keyboardLayout);
-        //    }
-        //    catch (Exception _)
-        //    {
-        //        return new CultureInfo(1055); // Assume Turkish if something went wrong.
-        //    }
-        //}
+        private void MouseClickMaker()
+        {
+            for (int i = 0; i < mouseClickEventsBuffer.Count; i++)
+            {
+                if (mouseClickEventsBuffer[i] != null)
+                {
+                    if (mouseClickEventsBuffer[i].Type == KeystrokeType.KeyDown)
+                    {
+                        MouseClick mouseClick = new MouseClick();
+                        mouseClick.MouseButton = mouseClickEventsBuffer[i].MouseButton;
+                        mouseClick.ButtonDown = mouseClickEventsBuffer[i].EventTime;                        
+                        for (int j = i + 1; j < mouseClickEventsBuffer.Count; j++)
+                        {
+                            if (mouseClickEventsBuffer[j] != null)
+                            {
+                                if (mouseClickEventsBuffer[j].MouseButton.KeyIndex == mouseClick.MouseButton.KeyIndex)
+                                {
+                                    if (mouseClickEventsBuffer[j].Type == KeystrokeType.KeyUp)
+                                    {
+                                        mouseClick.ButtonUp = mouseClickEventsBuffer[j].EventTime;
+                                        mouseData.MouseClickTotalTime += mouseClick.HoldTime;
+                                        mouseClicks.Add(mouseClick);
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        mouseClickEventsBuffer[j] = null;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            mouseClickEventsBuffer.Clear();            
+        }
     }
 }

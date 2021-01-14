@@ -8,7 +8,6 @@ namespace KDACore.StateControllers
 {
     public interface IStateController
     {        
-        void Initialize(string path);
         void Run();
         void Stop();
         bool IsRunning();

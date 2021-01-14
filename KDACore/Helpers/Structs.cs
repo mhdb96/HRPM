@@ -29,7 +29,7 @@ namespace KDACore.Helpers
         public POINT pt;
         public int mouseData; // be careful, this must be ints, not uints (was wrong before I changed it...). regards, cmew.
         public int flags;
-        public int time;
+        public uint time;
         public UIntPtr dwExtraInfo;
     }
 
