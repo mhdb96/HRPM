@@ -1,0 +1,141 @@
+﻿<UserControl x:Class="HRPMonitor.Views.MainControlView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HRPMonitor.Views"
+            xmlns:converters="clr-namespace:HRPMonitor.Converters"
+            xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+            xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+            xmlns:cal="http://www.caliburnproject.org"
+            xmlns:tb="http://www.hardcodet.net/taskbar"
+            xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+            xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:LoggingStatusToIconConverter x:Key="LoggingStatusToIconConverter"/>
+            <converters:LoggingStatusToColorConverter x:Key="LoggingStatusToColorConverter"/>
+            <converters:LoggingStatusToActionIconConverter x:Key="LoggingStatusToActionIconConverter"/>
+            <converters:LoggingStatusToActionColorConverter x:Key="LoggingStatusToActionColorConverter"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Grid.Row="1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="0"/>
+        </Grid.RowDefinitions>
+        <materialDesign:Card Grid.Row="1" Grid.Column="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <materialDesign:ColorZone
+                    Grid.Column="0"
+                    Mode="PrimaryMid">
+                    <materialDesign:PackIcon
+                            Kind="AccountCircle"
+                            Foreground="{StaticResource MaterialDesignLightBackground}"
+                            Height="50"
+                            Width="50"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center" />
+                </materialDesign:ColorZone>
+                <TextBlock VerticalAlignment="Center"    
+                           TextWrapping="Wrap"
+                           FontFamily="{StaticResource AllerReg}"
+                           HorizontalAlignment="Center" Grid.Column="1" Text="{Binding Username}"/>
+            </Grid>
+        </materialDesign:Card>
+        <Grid Grid.Row="2" Grid.Column="1" Margin="0 20 0 20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <materialDesign:PackIcon Kind="ClockCheck" VerticalAlignment="Center" Foreground="#43a047" Margin="0 0 5 0" Width="20" Height="20"/>
+                <StackPanel>
+                    <TextBlock FontSize="10" Text="{Binding StartTimeLabel}" />
+                    <TextBlock FontFamily="{StaticResource AllerReg}" Text="{Binding StartTime}" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                <materialDesign:PackIcon Kind="ClockAlert" VerticalAlignment="Center" Foreground="#f4511e" Margin="0 0 5 0" Width="20" Height="20"/>
+                <StackPanel>
+                    <TextBlock FontSize="10" Text="{Binding StopTimeLabel}" />
+                    <TextBlock Text="{Binding StopTime}" FontFamily="{StaticResource AllerReg}"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <StackPanel Grid.Row="3" Grid.Column="1" VerticalAlignment="Center">
+            <ToggleButton
+                IsEnabled="{Binding IsControlable}"
+                Height="70" Width="70"
+                Background="#fafafa"
+                Style="{StaticResource MaterialDesignActionToggleButton}"
+                ToolTip="{Binding ActionToolTip}"
+                cal:Message.Attach="Toggle">
+                <ToggleButton.Content>
+                    <materialDesign:PackIcon   
+                        Kind="{Binding Path=LoggingStatus, Converter={StaticResource LoggingStatusToActionIconConverter}, FallbackValue='Play'}" 
+                        Foreground="{Binding Path=LoggingStatus, Converter={StaticResource LoggingStatusToActionColorConverter}}"
+                        Height="50" Width="50" />
+                </ToggleButton.Content>
+                <materialDesign:ToggleButtonAssist.OnContent>
+                    <materialDesign:PackIcon
+                        Kind="{Binding Path=LoggingStatus, Converter={StaticResource LoggingStatusToActionIconConverter}}" 
+                        Foreground="{Binding Path=LoggingStatus, Converter={StaticResource LoggingStatusToActionColorConverter}}"
+                        Height="50" Width="50"/>
+                </materialDesign:ToggleButtonAssist.OnContent>
+            </ToggleButton>
+            <StackPanel Height="30" Margin="0 30 0 0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock 
+                    VerticalAlignment="Center"
+                    Margin="0 0 5 0"
+                    FontSize="18"
+                    Foreground="{Binding Path=LoggingStatus, Converter={StaticResource LoggingStatusToColorConverter}}"
+                    Text="{Binding LoggingStatusText}" FontFamily="{StaticResource AllerReg}"  />
+                <ProgressBar
+                    VerticalAlignment="Center"
+                    Visibility="{Binding Path=IsRunning, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Style="{DynamicResource MaterialDesignCircularProgressBar}"
+                    HorizontalAlignment="Center"
+                    IsIndeterminate="{Binding Path=IsRunning, Mode=OneWay}"
+                    Foreground="#43a047"
+                    Value="0"/>
+                <materialDesign:PackIcon
+                    VerticalAlignment="Center"
+                    Visibility="{Binding Path=IsStopped, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Kind="Stop" Foreground="#f4511e" Width="25" Height="25"
+                    Margin="3"/>
+                <materialDesign:PackIcon
+                    VerticalAlignment="Center"
+                    Visibility="{Binding Path=IsPaused, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Kind="Pause" Foreground="#f57f17" Width="25" Height="25"
+                    Margin="3"/>
+            </StackPanel>
+            <TextBlock 
+                Margin="0 10 0 0" FontSize="12"
+                HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" 
+                Text="{Binding StatusDescription}"/>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

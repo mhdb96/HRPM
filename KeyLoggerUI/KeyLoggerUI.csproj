@@ -99,17 +99,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\KDACore\KDACore.csproj">
+    <ProjectReference Include="..\HRPMCore\HRPMCore.csproj">
       <Project>{b2d29b7f-4c24-418c-b2c6-f56678b4c4d8}</Project>
-      <Name>KDACore</Name>
+      <Name>HRPMCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KDASharedLibrary\KDASharedLibrary.csproj">
+    <ProjectReference Include="..\HRPMSharedLibrary\HRPMSharedLibrary.csproj">
       <Project>{dcab7c76-be37-46aa-80f1-6b89d87b97cf}</Project>
-      <Name>KDASharedLibrary</Name>
+      <Name>HRPMSharedLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KDAUILibrary\KDAUILibrary.csproj">
+    <ProjectReference Include="..\HRPMUILibrary\HRPMUILibrary.csproj">
       <Project>{c149b5ed-17d8-41e8-8a44-61ad756355b2}</Project>
-      <Name>KDAUILibrary</Name>
+      <Name>HRPMUILibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

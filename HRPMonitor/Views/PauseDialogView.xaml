@@ -1,0 +1,47 @@
+﻿<UserControl 
+    x:Class="HRPMonitor.Views.PauseDialogView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:HRPMonitor.Views"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:ns="clr-namespace:HRPMonitor"
+    xmlns:cal="http://www.caliburnproject.org"
+    mc:Ignorable="d" >
+    <Border Width="200">
+        <StackPanel Margin="0">
+            <TextBlock TextWrapping="Wrap" Margin="10 10 10 10"
+                Text="{ns:Loc PauseMenuQuestion}"/>
+            <StackPanel>
+                <Button 
+                    cal:Message.Attach="PauseForFirst"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" 
+                    Style="{DynamicResource MaterialDesignFlatButton}" 
+                    Padding="10 5 0 5" 
+                    Content="{Binding PauseMenuFirstOption}"
+                    HorizontalContentAlignment="Left"/>
+                <Button 
+                    cal:Message.Attach="PauseForSecond"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" 
+                    Style="{DynamicResource MaterialDesignFlatButton}" 
+                    Padding="10 5 0 5" 
+                    Content="{Binding PauseMenuSecondOption}" 
+                    HorizontalContentAlignment="Left"/>
+                <Button 
+                    cal:Message.Attach="PauseForThird"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" 
+                    Style="{DynamicResource MaterialDesignFlatButton}" 
+                    Padding="10 5 0 5" 
+                    Content="{Binding PauseMenuThirdOption}" 
+                    HorizontalContentAlignment="Left"/>
+            </StackPanel>
+            <Button 
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" 
+                HorizontalAlignment="Right" Margin="3" 
+                Style="{DynamicResource MaterialDesignFlatButton}" 
+                FontFamily="{StaticResource AllerLt}"
+                Content="{ns:Loc PauseMenuCancelButton}"/>
+        </StackPanel>
+    </Border>
+</UserControl>

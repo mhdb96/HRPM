@@ -1,4 +1,4 @@
-﻿using KDAUILibrary.Logic;
+﻿using HRPMUILibrary.Logic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,17 +16,17 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
-using KDAUILibrary.Helpers;
-using KDACore.Helpers;
-using KDASharedLibrary.Enums;
-using KDASharedLibrary.Helpers;
+using HRPMUILibrary.Helpers;
+using HRPMCore.Helpers;
+using HRPMSharedLibrary.Enums;
+using HRPMSharedLibrary.Helpers;
 using Microsoft.Win32;
-using KDASharedLibrary.DataAccess;
-using KDASharedLibrary.Models;
-using KDACore;
-using KDACore.Enums;
-using KDAUILibrary;
-using KDACore.Managers;
+using HRPMSharedLibrary.DataAccess;
+using HRPMSharedLibrary.Models;
+using HRPMCore;
+using HRPMCore.Enums;
+using HRPMUILibrary;
+using HRPMCore.Managers;
 
 namespace KeyLoggerUI
 {

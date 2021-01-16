@@ -51,13 +51,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\KDABackendLibrary\KDABackendLibrary.csproj">
+    <ProjectReference Include="..\HRPMBackendLibrary\HRPMBackendLibrary.csproj">
       <Project>{21a20cc6-b115-4acf-9741-6a3569eedcfa}</Project>
-      <Name>KDABackendLibrary</Name>
+      <Name>HRPMBackendLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KDASharedLibrary\KDASharedLibrary.csproj">
-      <Project>{DCAB7C76-BE37-46AA-80F1-6B89D87B97CF}</Project>
-      <Name>KDASharedLibrary</Name>
+    <ProjectReference Include="..\HRPMSharedLibrary\HRPMSharedLibrary.csproj">
+      <Project>{dcab7c76-be37-46aa-80f1-6b89d87b97cf}</Project>
+      <Name>HRPMSharedLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
