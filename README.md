@@ -1,1 +1,1 @@
-The main repo for Keystrokes Dynamics Analysis project
+The main repo for HR Productivity Monitoring project
