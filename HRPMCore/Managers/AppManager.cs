@@ -142,7 +142,7 @@ namespace HRPMCore.Managers
                         }
                         else
                         {
-                            Console.WriteLine(newSession.App.ProcessName);
+                            //Console.WriteLine(newSession.App.ProcessName);
                             CreateSession(newSession);
                             isChanged = true;
                         }                        

@@ -1,11 +1,14 @@
 ﻿using Caliburn.Micro;
 using HRPMCore;
 using HRPMCore.Enums;
+using HRPMCore.Managers;
+using HRPMonitor.ICallers;
 using HRPMonitor.Models;
 using HRPMonitor.Views;
 using HRPMSharedLibrary.Enums;
 using HRPMSharedLibrary.Models;
 using HRPMUILibrary;
+using HRPMUILibrary.Helpers;
 using HRPMUILibrary.Logic.Files;
 using HRPMUILibrary.Logic.Logs;
 using MaterialDesignThemes.Wpf;
@@ -21,7 +24,7 @@ using UIStrings = HRPMonitor.Properties.Resources;
 
 namespace HRPMonitor.ViewModels
 {
-    public class MainControlViewModel : Screen, IHandle<PauseOptionModel>
+    public class MainControlViewModel : Screen, IHandle<PauseOptionModel>, ITasksWindowCaller
     {
         //private string _username = GlobalConfig.CurruntUser;
         private bool _isLogging = false;
@@ -45,6 +48,8 @@ namespace HRPMonitor.ViewModels
         private LogsManager logMngr;
         private FilesManager filelMngr;
         private User _user;
+        private WorkTask curruntTask;
+        private List<WorkTask> workTasks = new List<WorkTask>();
 
         #region UI Properties
         public string Username
@@ -218,6 +223,15 @@ namespace HRPMonitor.ViewModels
                 PublishStatusCahngedEvent();
             }
         }
+
+        public string TaskText 
+        { 
+            get 
+            {
+                return "Tasks";
+            } 
+        }
+
         #endregion
 
         /// <summary>
@@ -242,7 +256,7 @@ namespace HRPMonitor.ViewModels
             if (LoggingStatus == LoggingStatus.Paused)
             {
                 isPaused = false;
-                StartTime = UIStrings.StartTime;
+                StartTime = startTime.ToString("HH:mm");
                 StartTimeLabel = UIStrings.StartTimeLabel;
                 LoggingStatus = LoggingStatus.Running;
                 logMngr.AddLog(new Log
@@ -256,6 +270,12 @@ namespace HRPMonitor.ViewModels
             {
                 await DialogHost.Show(new PauseDialogView(_eventAggregator), "RootDialog");
             }
+        }
+
+        public void OpenTasks()
+        {
+            TasksWindow win = new TasksWindow(curruntTask, workTasks, this);
+            win.ShowDialog();
         }
         public void Handle(PauseOptionModel message)
         {
@@ -278,6 +298,13 @@ namespace HRPMonitor.ViewModels
 
         private void AppTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            if (TimeManager.GetTimeManager().Usage != null)
+            {
+                //Console.WriteLine(TimeManager.GetTimeManager().Usage.IdleMinutes);
+                var api = ApiHelper.GetApiHelper();
+                api.PostUsageTime(TimeManager.GetTimeManager().Usage, _user);
+                TimeManager.GetTimeManager().Usage = null;
+            }
             TimeSpan nowtime = DateTime.Now.TimeOfDay;
             if (isConnected)
             {
@@ -288,8 +315,8 @@ namespace HRPMonitor.ViewModels
                         logMngr.SyncLogs(_user);
                     }
                 }
-                if (DateTime.Now.Minute % 2  == 0)
-                {
+                if (DateTime.Now.Minute % 30  == 0)
+                {                    
                     if (!_shouldSkip)
                     {
                         _shouldSkip = true;
@@ -327,12 +354,12 @@ namespace HRPMonitor.ViewModels
                 else
                 {
                     TimeSpan time = TimeSpan.FromSeconds(pauseCountDown);
-                    StartTime = time.ToString(@"mm\:ss");
+                    StartTime = time.ToString(@"hh\:mm\:ss");
                 }
 
             }
             if (LoggingStatus == LoggingStatus.Stopped &&
-                nowtime > startTime.TimeOfDay && nowtime < endTime.TimeOfDay /*&& DateTime.Now.DayOfWeek != DayOfWeek.Saturday*/ && DateTime.Now.DayOfWeek != DayOfWeek.Sunday)
+                nowtime > startTime.TimeOfDay && nowtime < endTime.TimeOfDay /*&& DateTime.Now.DayOfWeek != DayOfWeek.Saturday*/ /*&& DateTime.Now.DayOfWeek != DayOfWeek.Sunday*/)
             {
                 isConnected = true;
                 LoggingStatus = LoggingStatus.Running;
@@ -353,6 +380,7 @@ namespace HRPMonitor.ViewModels
                 LoggingStatus = LoggingStatus.Stopped;
                 filelMngr.CreateLocalFile(stateMngr.GetSessions());
                 filelMngr.DeleteLiveDataFile();
+                stateMngr.ClearData();
                 isConnected = false;
                 IsControlable = false;
                 logMngr.AddLog(new Log
@@ -405,6 +433,22 @@ namespace HRPMonitor.ViewModels
                 LoggingSatusText = LoggingStatusText,
                 loggingStatus = LoggingStatus
             });
+        }
+
+        public void TaskAdded(WorkTask workTask)
+        {
+            
+        }
+
+        public void TaskCreated(WorkTask workTask)
+        {
+            curruntTask = workTask;
+        }
+
+        public async Task TaskSaved(WorkTask workTask)
+        {
+            var api = ApiHelper.GetApiHelper();
+            await api.PostTask(workTask, _user);
         }
     }
 }

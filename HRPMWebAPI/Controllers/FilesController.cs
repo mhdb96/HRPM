@@ -34,7 +34,6 @@ namespace HRPMWebAPI.Controllers
                     AppModel appModel = new AppModel();
                     appModel.ProcessName = session.App.ProcessName;
                     GlobalConfig.Connection.App_Insert(appModel);                                        
-
                     SessionModel sessionModel = new SessionModel();
                     sessionModel.AppId = appModel.Id;
                     sessionModel.BackspaceStrokesCount = session.KeyboardData.BackspaceStrokesCount;
@@ -48,17 +47,14 @@ namespace HRPMWebAPI.Controllers
                     sessionModel.UserId = model.User.Id;
                     sessionModel.AppId = appModel.Id;
                     GlobalConfig.Connection.Session_Insert(sessionModel);
-
                     if (session.App.Type == HRPMSharedLibrary.Enums.AppType.Browser)
                     {
                         DomainModel domainModel = new DomainModel();
                         domainModel.Domain = session.App.Content;
                         GlobalConfig.Connection.Domain_Insert(domainModel);
                         GlobalConfig.Connection.SessionDomain_Insert(sessionModel.Id, domainModel.Id);
-                    }
-                    
-                }
-                
+                    }                    
+                }                
             }
         }
     }

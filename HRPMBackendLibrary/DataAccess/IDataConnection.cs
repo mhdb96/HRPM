@@ -36,6 +36,8 @@ namespace HRPMBackendLibrary.DataAccess
         void Domain_Insert(DomainModel model);
         void SessionDomain_Insert(int sessionId, int domainId);
         void Session_Insert(SessionModel model);
+        void Task_Insert(TaskModel model);
+        void UsageTime_Insert(UsageTimeModel model);
 
 
     }

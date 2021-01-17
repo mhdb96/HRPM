@@ -142,7 +142,7 @@ namespace HRPMonitor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pause for {0} min.
+        ///   Looks up a localized string similar to Pause till tomorow.
         /// </summary>
         internal static string PauseMenuThirdOption {
             get {

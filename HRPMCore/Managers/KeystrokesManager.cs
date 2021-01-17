@@ -63,10 +63,11 @@ namespace HRPMCore.Managers
                 if (eventType == WM.KEYDOWN || eventType == WM.SYSKEYDOWN)
                 {
                     keystrokeEvent.Type = KeystrokeType.KeyDown;
-                    Console.WriteLine("Down");
+                    //Console.WriteLine("Down");
                 }
                 else if (eventType == WM.KEYUP || eventType == WM.SYSKEYUP)
                 {
+                    TimeManager.GetTimeManager().CreateNewAction();
                     keystrokeEvent.Type = KeystrokeType.KeyUp;
                     //Console.WriteLine("Up");
                 }

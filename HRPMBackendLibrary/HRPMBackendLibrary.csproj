@@ -65,6 +65,7 @@
     <Compile Include="Models\ProofModel.cs" />
     <Compile Include="Models\SessionModel.cs" />
     <Compile Include="Models\TaskModel.cs" />
+    <Compile Include="Models\UsageTimeModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

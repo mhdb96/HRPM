@@ -51,6 +51,7 @@
     <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Managers\AppManager.cs" />
     <Compile Include="Managers\MouseManager.cs" />
+    <Compile Include="Managers\TimeManager.cs" />
     <Compile Include="Models\MouseClick.cs" />
     <Compile Include="Models\MouseClickEvent.cs" />
     <Compile Include="Models\WindowInfo.cs" />

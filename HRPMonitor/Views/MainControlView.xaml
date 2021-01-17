@@ -135,6 +135,15 @@
                 Margin="0 10 0 0" FontSize="12"
                 HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" 
                 Text="{Binding StatusDescription}"/>
+            <Button Margin="0 10" Width="150"
+                    cal:Message.Attach="OpenTasks">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="CalendarTask" VerticalAlignment="Center" Foreground="White" Margin="0 0 5 0" Width="20" Height="20"/>
+                    <TextBlock Foreground="White" Text="{Binding TaskText}"/>
+                    
+                </StackPanel>                  
+                
+            </Button>
 
         </StackPanel>
     </Grid>

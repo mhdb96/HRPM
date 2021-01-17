@@ -91,24 +91,7 @@ namespace HRPMBackendLibrary.DataAccess
                 model.Id = p.Get<int>("@id");
             }
         }
-        
-        
-        
 
-        
-
-        
-
-        
-        
-
-        
-
-        
-
-        
-
-        
         public List<UserModel> User_SelectAll()
         {
             using (IDbConnection connection = new SqlConnection(GlobalConfig.CnnString(databaseName)))
@@ -420,6 +403,38 @@ namespace HRPMBackendLibrary.DataAccess
                 p.Add("@AppId", model.AppId);
                 p.Add("@id", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
                 connection.Execute("dbo.spSessions_Insert", p, commandType: CommandType.StoredProcedure);
+                model.Id = p.Get<int>("@id");
+            }
+        }
+
+        public void Task_Insert(TaskModel model)
+        {
+            using (IDbConnection connection = new SqlConnection(GlobalConfig.CnnString(databaseName)))
+            {
+                var p = new DynamicParameters();
+                p.Add("@Title", model.Title);
+                p.Add("@Description", model.Description);
+                p.Add("@StartTime", model.StartTime);
+                p.Add("@EndTime", model.EndTime);
+                p.Add("@UserId", model.UserId);
+                p.Add("@id", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
+                connection.Execute("spTasks_Insert", p, commandType: CommandType.StoredProcedure);
+                model.Id = p.Get<int>("@id");
+            }
+        }
+
+        public void UsageTime_Insert(UsageTimeModel model)
+        {
+            using (IDbConnection connection = new SqlConnection(GlobalConfig.CnnString(databaseName)))
+            {
+                var p = new DynamicParameters();
+                p.Add("@ActiveMinutes", model.ActiveMinutes);
+                p.Add("@IdleMinutes", model.IdleMinutes);
+                p.Add("@StartTime", model.StartTime);
+                p.Add("@EndTime", model.EndTime);
+                p.Add("@UserId", model.UserId);
+                p.Add("@id", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
+                connection.Execute("spUsageTimes_Insert", p, commandType: CommandType.StoredProcedure);
                 model.Id = p.Get<int>("@id");
             }
         }

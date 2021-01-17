@@ -65,7 +65,9 @@
     <Compile Include="Models\App.cs" />
     <Compile Include="Models\SeekTimeData.cs" />
     <Compile Include="Models\Session.cs" />
+    <Compile Include="Models\UsageTime.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\WorkTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserData\UserProperties.cs" />
   </ItemGroup>

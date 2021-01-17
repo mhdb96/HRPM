@@ -118,5 +118,37 @@ namespace HRPMUILibrary.Helpers
                 }
             }
         }
+        public async Task<bool> PostTask(WorkTask task, User user)
+        {
+            task.User = user;
+            using (HttpResponseMessage res = await apiClient.PostAsJsonAsync("api/tasks/PostTask", task))
+            {
+                if (res.IsSuccessStatusCode)
+                {
+                    task = null;
+                    return await res.Content.ReadAsAsync<bool>();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        public async Task<bool> PostUsageTime(UsageTime usage, User user)
+        {
+            usage.User = user;
+            using (HttpResponseMessage res = await apiClient.PostAsJsonAsync("api/usagetimes/postusage", usage))
+            {
+                if (res.IsSuccessStatusCode)
+                {
+                    usage = null;
+                    return await res.Content.ReadAsAsync<bool>();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
     }
 }

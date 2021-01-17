@@ -59,6 +59,7 @@ namespace HRPMCore.Managers
                     }
                     else
                     {
+                        TimeManager.GetTimeManager().CreateNewAction();
                         mouseClickEvent.Type = KeystrokeType.KeyUp;
                         //Console.WriteLine("Up");
                     }
@@ -73,6 +74,7 @@ namespace HRPMCore.Managers
                     }
                     else
                     {
+                        TimeManager.GetTimeManager().CreateNewAction();
                         mouseClickEvent.Type = KeystrokeType.KeyUp;
                         //Console.WriteLine("Up");
                     }

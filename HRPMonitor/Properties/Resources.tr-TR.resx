@@ -145,7 +145,7 @@
     <value>{0} dakika duraklat</value>
   </data>
   <data name="PauseMenuThirdOption" xml:space="preserve">
-    <value>{0} dakika duraklat</value>
+    <value>Yarına duraklat</value>
   </data>
   <data name="PauseTimeLabel" xml:space="preserve">
     <value>Çalıştırılacak</value>

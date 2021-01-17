@@ -135,6 +135,7 @@
     <Compile Include="Converters\LoggingStatusToColorConverter.cs" />
     <Compile Include="Converters\LoggingStatusToIconConverter.cs" />
     <Compile Include="ICallers\ILoginWindowCaller.cs" />
+    <Compile Include="ICallers\ITasksWindowCaller.cs" />
     <Compile Include="Models\BalloonMessageModel.cs" />
     <Compile Include="Models\LoggingInfoModel.cs" />
     <Compile Include="Models\PauseOptionModel.cs" />
@@ -160,6 +161,9 @@
     </Compile>
     <Compile Include="Views\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TasksWindow.xaml.cs">
+      <DependentUpon>TasksWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Window\WindowResizer.cs" />
   </ItemGroup>
@@ -235,9 +239,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="logo.ico" />
+    <Page Include="Views\TasksWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HRPMCore\HRPMCore.csproj">
@@ -252,12 +257,6 @@
       <Project>{c149b5ed-17d8-41e8-8a44-61ad756355b2}</Project>
       <Name>HRPMUILibrary</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="logo2.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="logo - Copy.ico" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

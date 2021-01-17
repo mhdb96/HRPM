@@ -13,9 +13,17 @@ namespace HRPMonitor.ViewModels
     public class PauseDialogViewModel : Screen
     {
         
-        private readonly double firstPausePeriodTime = 1;
-        private readonly double secondPausePeriodTime = 5;
-        private readonly double thirdPausePeriodTime = 10;
+        private readonly double firstPausePeriodTime = 15;
+        private readonly double secondPausePeriodTime = 60;
+        //private readonly double thirdPausePeriodTime ;
+        private double thirdPausePeriodTime 
+        { 
+            get 
+            { 
+                return (int)(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.AddDays(1).Day, 0, 0, 0) - DateTime.Now).TotalMinutes; 
+            } 
+        }
+
         private readonly IEventAggregator _eventAggregator;
 
         public string PauseMenuFirstOption

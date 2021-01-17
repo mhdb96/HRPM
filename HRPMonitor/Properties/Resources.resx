@@ -145,7 +145,7 @@
     <value>Pause for {0} min</value>
   </data>
   <data name="PauseMenuThirdOption" xml:space="preserve">
-    <value>Pause for {0} min</value>
+    <value>Pause till tomorow</value>
   </data>
   <data name="PauseTimeLabel" xml:space="preserve">
     <value>Will start in:</value>
